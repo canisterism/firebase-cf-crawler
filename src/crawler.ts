@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { fetchGameInfo } from "./game";
+import { GamePage } from "./game";
 
 (async () => {
   try {
@@ -20,7 +20,8 @@ import { fetchGameInfo } from "./game";
       imageUrl: undefined,
       price: undefined,
     };
-    const game = await fetchGameInfo(page, initialGame);
+    const gamePage = new GamePage({ page: page, game: initialGame });
+    const game = await gamePage.fetchGameInfo();
 
     // hardwares.map(async (hardware: Hardware) => {
     //   await page.goto(url(hardware.id));
