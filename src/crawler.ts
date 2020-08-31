@@ -11,9 +11,9 @@ import { GamePage } from "./game";
 
     const page = await browser.newPage();
     const initialGame = {
-      title: "スーパーマリオワールド",
-      hardware: "sfc",
-      wikiId: 3502,
+      title: "p5",
+      hardware: "ps4",
+      wikiId: 6437,
       genre: undefined,
       publishedAt: undefined,
       publisher: undefined,
