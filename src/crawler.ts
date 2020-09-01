@@ -1,5 +1,5 @@
 import puppeteer from "puppeteer";
-import { GamePage } from "./game";
+import { GamePage } from "./pages/gamePage";
 
 (async () => {
   try {
@@ -10,18 +10,13 @@ import { GamePage } from "./game";
     });
 
     const page = await browser.newPage();
-    const initialGame = {
-      title: "p5",
+    const gamePage = new GamePage({
+      page: page,
+      title: "ペルソナ5",
       hardware: "ps4",
       wikiId: 6437,
-      genre: undefined,
-      publishedAt: undefined,
-      publisher: undefined,
-      imageUrl: undefined,
-      price: undefined,
-    };
-    const gamePage = new GamePage({ page: page, game: initialGame });
-    const game = await gamePage.fetchGameInfo();
+    });
+    const game = await gamePage.fetch();
 
     // hardwares.map(async (hardware: Hardware) => {
     //   await page.goto(url(hardware.id));
