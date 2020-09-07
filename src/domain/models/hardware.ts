@@ -1,6 +1,6 @@
 export type Hardware = {
   wikiId: number;
-  name: String;
+  name: string;
 };
 
 export const hardwares: Hardware[] = [
@@ -14,7 +14,7 @@ export const hardwares: Hardware[] = [
   { wikiId: 22, name: "PlayStation" },
   { wikiId: 23, name: "PlayStation2" },
   { wikiId: 24, name: "PlayStation3" },
-  { wikiId: 519, name: "PlayStation4" },
+  { wikiId: 5139, name: "PlayStation4" },
   { wikiId: 25, name: "Xbox" },
   { wikiId: 26, name: "Xbox 360" },
   { wikiId: 556, name: "Xbox One" },
