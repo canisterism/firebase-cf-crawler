@@ -3,7 +3,7 @@ import { Hardware, hardwares } from "../domain/models/hardware";
 import { HardWarePage } from "../pages/hardwarePage";
 import { GamePage } from "../pages/gamePage";
 import { registerGame } from "../application/usecases/registerGame";
-import { assert } from "../utils/assert";
+import { assert } from "../utility/functions";
 
 (async () => {
   try {
@@ -28,16 +28,17 @@ import { assert } from "../utils/assert";
       page: page,
       hardware: hardware,
     });
-    await hardwarePage.fetch();
+    const games = await hardwarePage.fetchGames();
 
     console.log(`fetched: ${hardware.name}`);
 
-    hardwarePage.games.forEach(async (basicInfo) => {
+    games.forEach(async (basicInfo) => {
       const gamePage = new GamePage({
         page: page,
         title: basicInfo.title,
         hardware: basicInfo.hardware,
         wikiId: basicInfo.wikiId,
+        genre: basicInfo.genre,
       });
 
       console.log(`start fetching: ${basicInfo.title}`);

@@ -19,8 +19,6 @@ export class HardWarePage {
   }
 
   async fetchGames(): Promise<GameBasicInfo[]> {
-    // const url = `https://w.atwiki.jp/gcmatome/pages/${this.hardware.wikiId}.html`;
-
     await this._page.goto(url(this.hardware.wikiId), {
       waitUntil: "domcontentloaded",
     });

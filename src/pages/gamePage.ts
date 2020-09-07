@@ -1,34 +1,36 @@
 import puppeteer from "puppeteer";
 import { Game, GameDetails } from "../domain/models/game";
+import { url } from "../utility/functions";
 
 export class GamePage {
   private _page: puppeteer.Page;
   private _title: string;
   private _hardware: string;
   private _wikiId: number;
+  private _genre: string;
 
   constructor({
     page,
     title,
     hardware,
     wikiId,
+    genre,
   }: {
     page: puppeteer.Page;
     title: string;
     hardware: string;
     wikiId: number;
+    genre: string;
   }) {
     this._page = page;
     this._title = title;
     this._hardware = hardware;
     this._wikiId = wikiId;
-  }
-  url(id: number): string {
-    return `https://w.atwiki.jp/gcmatome/pages/${id}.html`;
+    this._genre = genre;
   }
 
   async fetch(): Promise<Game> {
-    await this._page.goto(this.url(this._wikiId), {
+    await this._page.goto(url(this._wikiId), {
       waitUntil: "domcontentloaded",
     });
     const imageUrl = await this.imageUrl();
@@ -38,7 +40,7 @@ export class GamePage {
       hardware: this._hardware,
       wikiId: this._wikiId,
       imageUrl: imageUrl,
-      genre: details.genre,
+      genre: this._genre,
       publishedAt: details.publishedAt,
       publisher: details.publisher,
       price: details.price,
@@ -85,9 +87,7 @@ export class GamePage {
       const [key, value] = [row[0], row[1]];
       console.log(`${key}: ${value}`);
 
-      if (key.includes("ジャンル")) {
-        details.genre = value.split("\n")[0];
-      } else if (key.includes("発売日")) {
+      if (key.includes("発売日")) {
         details.publishedAt = this.formatStringToPublishedAt(value);
       } else if (key.includes("発売")) {
         // 「発売」「発売・開発元」「発売元」のパターンが存在する
