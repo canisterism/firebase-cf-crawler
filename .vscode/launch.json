@@ -13,6 +13,7 @@
       "preLaunchTask": "tsc: build - tsconfig.json",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
       "args": ["${workspaceFolder}/src/index.ts"],
+      "smartStep": true,
       "cwd": "${workspaceRoot}",
 
       "protocol": "inspector",
