@@ -1,7 +1,7 @@
 import puppeteer from "puppeteer";
 import { Hardware } from "../domain/models/hardware";
 import { GameBasicInfo } from "../domain/models/game";
-// import * as util from "../utility/functions";
+import { assert, url, extractPageId } from "../utility/functions";
 
 export class HardWarePage {
   _page: puppeteer.Page;
@@ -19,12 +19,12 @@ export class HardWarePage {
   }
 
   async fetchGames(): Promise<GameBasicInfo[]> {
-    const url = `https://w.atwiki.jp/gcmatome/pages/${this.hardware.wikiId}.html`;
+    // const url = `https://w.atwiki.jp/gcmatome/pages/${this.hardware.wikiId}.html`;
 
-    await this._page.goto(url, {
+    await this._page.goto(url(this.hardware.wikiId), {
       waitUntil: "domcontentloaded",
     });
-    console.log(`fetched ${url}.`);
+    console.log(`fetched ${url(this.hardware.wikiId)}.`);
 
     // 全部tr取ってくる
     const games = await this._page.$$eval("tr", (rows) => {
@@ -41,19 +41,24 @@ export class HardWarePage {
           return <GameBasicInfo>{
             title: link!.text,
             hardware: "", // TODO(canisterism): どうやってもthis.hardware.nameが取れないので方法を見つける
-            // wikiId: util.extractPageId(link!.href),
             wikiId: parseInt(
               new RegExp(/pages\/(\d+)\.html/).exec(link!.href)![1]
             ),
+            // TODO(canisterism): ホントはこう書きたいけどブラウザの世界にfunctionを持ってけない
+            // wikiId: extractPageId(link!.href),
             genre: genre, // 'ACT'など
           };
         });
       return games;
     });
     // TODO(canisterism): キモいので直したい ゴミコードを書くな
+    return this.addHardwareName(games);
+  }
+
+  addHardwareName(games: GameBasicInfo[]): GameBasicInfo[] {
     return games.map((game) => {
       game.hardware = this.hardware.name;
       return game;
-    }, this);
+    });
   }
 }
