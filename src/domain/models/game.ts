@@ -2,9 +2,9 @@ export interface GameBasicInfo {
   title: string;
   hardware: string;
   wikiId: number;
+  genre: string;
 }
 export interface GameDetails {
-  genre?: string;
   publishedAt?: Date;
   publisher?: string;
   price?: number;
@@ -14,8 +14,8 @@ export class Game {
   title: GameBasicInfo["title"];
   hardware: GameBasicInfo["hardware"];
   wikiId: GameBasicInfo["wikiId"];
+  genre: GameBasicInfo["genre"];
   imageUrl?: string;
-  genre: GameDetails["genre"];
   publishedAt: GameDetails["publishedAt"];
   publisher: GameDetails["publisher"];
   price: GameDetails["price"];
@@ -24,7 +24,7 @@ export class Game {
     title,
     hardware,
     wikiId,
-    genre = undefined,
+    genre,
     publishedAt = undefined,
     publisher = undefined,
     imageUrl = undefined,
@@ -33,7 +33,7 @@ export class Game {
     title: string;
     hardware: string;
     wikiId: number;
-    genre?: string;
+    genre: string;
     publishedAt?: Date;
     publisher?: string;
     imageUrl?: string;
