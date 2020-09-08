@@ -9,10 +9,11 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/src/index.ts",
+      "program": "${workspaceFolder}/src/scripts/registerGamesByHardware.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "runtimeArgs": ["--nolazy", "-r", "ts-node/register"],
-      "args": ["${workspaceFolder}/src/index.ts"],
+      // "args": ["${workspaceFolder}/src/index.ts"],
+      "args": ["${workspaceFolder}/src/scripts/registerGamesByHardware.ts"],
       "smartStep": true,
       "cwd": "${workspaceRoot}",
 

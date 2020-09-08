@@ -17,7 +17,7 @@ export const hardwares: Hardware[] = [
   { wikiId: 5139, name: "PlayStation4" },
   { wikiId: 25, name: "Xbox" },
   { wikiId: 26, name: "Xbox 360" },
-  { wikiId: 556, name: "Xbox One" },
+  { wikiId: 5506, name: "Xbox One" },
   { wikiId: 19, name: "メガドライブ" },
   { wikiId: 20, name: "セガサターン" },
   { wikiId: 21, name: "ドリームキャスト" },

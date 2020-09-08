@@ -30,21 +30,30 @@ export class GamePage {
   }
 
   async fetch(): Promise<Game> {
-    await this._page.goto(url(this._wikiId), {
-      waitUntil: "domcontentloaded",
-    });
-    const imageUrl = await this.imageUrl();
-    const details = this.formatTableRows(await this.fetchTableRows());
-    return new Game({
-      title: this._title,
-      hardware: this._hardware,
-      wikiId: this._wikiId,
-      imageUrl: imageUrl,
-      genre: this._genre,
-      publishedAt: details.publishedAt,
-      publisher: details.publisher,
-      price: details.price,
-    });
+    try {
+      await this._page.waitFor(3);
+      console.log("waiting...");
+      await this._page.goto(url(this._wikiId), {
+        waitUntil: "domcontentloaded",
+      });
+      console.log(`the page is now in ${this._title}`);
+      const imageUrl = await this.imageUrl();
+      const details = this.formatTableRows(await this.fetchTableRows());
+
+      return new Game({
+        title: this._title,
+        hardware: this._hardware,
+        wikiId: this._wikiId,
+        imageUrl: imageUrl,
+        genre: this._genre,
+        publishedAt: details.publishedAt,
+        publisher: details.publisher,
+        price: details.price || undefined,
+      });
+    } catch (error) {
+      console.error(error);
+      throw new Error(error);
+    }
   }
 
   async imageUrl(): Promise<string | undefined> {
@@ -85,7 +94,7 @@ export class GamePage {
     const details: GameDetails = {};
     rows.forEach((row: string[]) => {
       const [key, value] = [row[0], row[1]];
-      console.log(`${key}: ${value}`);
+      // console.log(`${key}: ${value}`);
 
       if (key.includes("発売日")) {
         details.publishedAt = this.formatStringToPublishedAt(value);
@@ -119,7 +128,7 @@ export class GamePage {
   formatStringToPrice(string: string): number | undefined {
     try {
       // xxx,xxx円のフォーマット
-      const priceText = /(\d{1,3} *,\d{1,3})円/.exec(string)![0];
+      const priceText = /(\d{1,3},*\d{1,3})円/.exec(string)![0];
       return parseInt(priceText.replace(",", ""));
     } catch (error) {
       console.error(error);
