@@ -2,3 +2,5 @@
 /dist
 src/config/firebase/serviceAccountKey.json
 !/.vscode/*
+/tmp/*
+!/tmp/tmp.json
