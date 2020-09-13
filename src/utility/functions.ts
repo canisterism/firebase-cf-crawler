@@ -10,3 +10,6 @@ export function url(id: number): string {
 export function extractPageId(url: string): number {
   return parseInt(new RegExp(/pages\/(\d+)\.html/).exec(url)![1]);
 }
+export function convertUndefinedToNull(k: string, v: any) {
+  return v === undefined ? null : v;
+}

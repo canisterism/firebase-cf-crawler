@@ -31,12 +31,12 @@ export class GamePage {
 
   async fetch(): Promise<Game> {
     try {
-      await this._page.waitFor(3);
+      // 1秒待つ
+      await this._page.waitFor(1000);
       console.log("waiting...");
       await this._page.goto(url(this._wikiId), {
-        waitUntil: "domcontentloaded",
+        waitUntil: "networkidle0", // トラフィックが発生しなくなるまで待つ
       });
-      console.log(`the page is now in ${this._title}`);
       const imageUrl = await this.imageUrl();
       const details = this.formatTableRows(await this.fetchTableRows());
 
@@ -46,8 +46,8 @@ export class GamePage {
         wikiId: this._wikiId,
         imageUrl: imageUrl,
         genre: this._genre,
-        publishedAt: details.publishedAt,
-        publisher: details.publisher,
+        publishedAt: details.publishedAt || undefined,
+        publisher: details.publisher || undefined,
         price: details.price || undefined,
       });
     } catch (error) {
@@ -93,45 +93,48 @@ export class GamePage {
   formatTableRows(rows: string[][]): GameDetails {
     const details: GameDetails = {};
     rows.forEach((row: string[]) => {
-      const [key, value] = [row[0], row[1]];
+      // 2列目に入ってる時と3列目に入ってる時があるので取得しておく
+      const [key, value1, value2] = [row[0], row[1], row[2]];
       // console.log(`${key}: ${value}`);
-
       if (key.includes("発売日")) {
-        details.publishedAt = this.formatStringToPublishedAt(value);
+        try {
+          details.publishedAt = this.formatStringToPublishedAt(value1);
+        } catch (error) {
+          details.publishedAt = this.formatStringToPublishedAt(value2);
+        }
       } else if (key.includes("発売")) {
         // 「発売」「発売・開発元」「発売元」のパターンが存在する
         // 「発売元」の方が「発売日」よりも前に来ることが前提になった順番
-        details.publisher = value.split("\n")[0];
+        try {
+          details.publisher = value1.split("\n")[0];
+        } catch (error) {
+          details.publisher = value2.split("\n")[0];
+        }
       } else if (key.includes("定価") || key.includes("価格")) {
-        details.price = this.formatStringToPrice(value);
+        try {
+          details.price = this.formatStringToPrice(value1);
+        } catch (error) {
+          details.price = this.formatStringToPrice(value2);
+        }
       }
     });
     return details;
   }
 
   formatStringToPublishedAt(string: string): Date | undefined {
-    try {
-      // yyyy年mm月dd日のフォーマット
-      const dateArray = /(\d{4})年(\d{1,2})月(\d{1,2})日/.exec(string);
+    // yyyy年mm月dd日のフォーマット
+    const dateArray = /(\d{4})年(\d{1,2})月(\d{1,2})日/.exec(string);
 
-      return new Date(
-        parseInt(dateArray![1]),
-        parseInt(dateArray![2]) - 1, // なぜか月が0indexなので1足しておく
-        parseInt(dateArray![3])
-      );
-    } catch (error) {
-      console.error(error);
-      return undefined;
-    }
+    return new Date(
+      parseInt(dateArray![1]),
+      parseInt(dateArray![2]) - 1, // なぜか月が0indexなので1足しておく
+      parseInt(dateArray![3])
+    );
   }
 
   formatStringToPrice(string: string): number | undefined {
-    try {
-      // xxx,xxx円のフォーマット
-      const priceText = /(\d{1,3},*\d{1,3})円/.exec(string)![0];
-      return parseInt(priceText.replace(",", ""));
-    } catch (error) {
-      console.error(error);
-    }
+    // xxx,xxx円のフォーマット
+    const priceText = /(\d{1,3},*\d{1,3})円/.exec(string)![0];
+    return parseInt(priceText.replace(",", ""));
   }
 }
